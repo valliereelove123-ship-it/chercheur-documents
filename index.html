@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chercheur de documents</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A0A08">
+<link rel="icon" href="icon-512.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#eee9db;
+    --paper:#0a0a08;
+    --line:#2b2a24;
+    --moss:#d1a83d;
+    --moss-deep:#8c6e1f;
+    --clay:#c98f5e;
+    --muted:#8c887a;
+    --card:#131310;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:48px 24px 100px;}
+
+  header{margin-bottom:40px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--moss);
+    margin-bottom:14px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(32px,5vw,48px);
+    line-height:1.05;
+    margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  h1 em{font-style:italic;color:var(--moss);}
+  .sub{
+    color:var(--muted);
+    font-size:15.5px;
+    line-height:1.55;
+    max-width:60ch;
+  }
+
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:28px;
+    margin-bottom:28px;
+  }
+  label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  input[type=text]{
+    width:100%;
+    padding:14px 16px;
+    font-size:17px;
+    font-family:'Fraunces',serif;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type=text]:focus{outline:2px solid var(--moss);outline-offset:1px;}
+
+  .row{display:flex;gap:24px;flex-wrap:wrap;margin-top:22px;}
+  .col{flex:1;min-width:220px;}
+
+  .chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    padding:8px 13px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    cursor:pointer;
+    background:var(--paper);
+    color:var(--ink);
+    user-select:none;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .chip.active{
+    background:var(--moss);
+    border-color:var(--moss);
+    color:#0a0a08;
+  }
+
+  .go{
+    margin-top:26px;
+    width:100%;
+    padding:16px;
+    background:var(--moss);
+    color:#0a0a08;
+    border:none;
+    border-radius:2px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .go:hover{background:var(--clay);}
+  .go:disabled{background:var(--line);color:var(--muted);cursor:not-allowed;}
+
+  .results{margin-top:36px;}
+  .results-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px;
+    margin-bottom:18px;
+  }
+  .results-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:20px;
+    margin:0;
+  }
+  .count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);}
+
+  .group{margin-bottom:26px;}
+  .group-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--clay);
+    margin-bottom:10px;
+  }
+  .card{
+    display:block;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:16px 18px;
+    margin-bottom:10px;
+    text-decoration:none;
+    color:var(--ink);
+    transition:border-color .15s, transform .1s;
+  }
+  .card:hover{border-color:var(--moss);transform:translateX(2px);}
+  .card-title{font-size:14.5px;font-weight:600;margin-bottom:4px;}
+  .card-query{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    word-break:break-all;
+  }
+
+  .empty{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  footer{
+    margin-top:50px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    font-size:12.5px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Recherche documentaire</div>
+    <h1>Trouve des documents, <em>partout où ils vivent.</em></h1>
+    <p class="sub">Entre un sujet. Choisis tes formats. L'outil ouvre des recherches sur tout le web — sans restriction de site — plus les moteurs spécialisés qui agrègent déjà des millions de documents institutionnels (ONG, gouvernements, universités, organisations).</p>
+  </header>
+
+  <div class="panel">
+    <label for="topic">Sujet de recherche</label>
+    <input type="text" id="topic" placeholder="ex : sécurité alimentaire Haïti, dette publique, migration régionale...">
+
+    <div class="row">
+      <div class="col">
+        <label>Formats</label>
+        <div class="chip-group" id="formats"></div>
+      </div>
+    </div>
+
+    <button class="go" id="goBtn">Chercher partout</button>
+  </div>
+
+  <div class="results" id="results"></div>
+
+  <div class="panel" id="enginesPanel" style="display:none;">
+    <label>Moteurs spécialisés (documents institutionnels, sans configuration)</label>
+    <div id="engines"></div>
+  </div>
+
+  <footer>
+    Chaque carte ouvre une recherche Google filtrée par domaine et type de fichier — les documents restent sur leurs sites d'origine (légaux, publics). Les domaines par secteur sont volontairement larges ; affine le sujet pour resserrer les résultats.
+  </footer>
+
+</div>
+
+<script>
+const FORMATS = [
+  { id:'pdf', label:'PDF', ext:'pdf' },
+  { id:'docx', label:'Word', ext:'docx' },
+  { id:'pptx', label:'PowerPoint', ext:'pptx' },
+  { id:'xlsx', label:'Excel', ext:'xlsx' }
+];
+
+let activeFormats = new Set(['pdf']);
+
+function renderChips(){
+  const formatEl = document.getElementById('formats');
+  formatEl.innerHTML = '';
+  FORMATS.forEach(f=>{
+    const c = document.createElement('div');
+    c.className = 'chip' + (activeFormats.has(f.id) ? ' active' : '');
+    c.textContent = f.label;
+    c.onclick = ()=>{
+      activeFormats.has(f.id) ? activeFormats.delete(f.id) : activeFormats.add(f.id);
+      renderChips();
+    };
+    formatEl.appendChild(c);
+  });
+}
+renderChips();
+
+// Moteurs généralistes : chacun cherche SUR TOUT LE WEB, aucune restriction de domaine.
+// C'est l'utilisateur qui ne choisit rien ici — l'outil couvre large par défaut.
+const WEB_ENGINES = [
+  { name: 'Google', build: q => 'https://www.google.com/search?q=' + encodeURIComponent(q) },
+  { name: 'Bing', build: q => 'https://www.bing.com/search?q=' + encodeURIComponent(q) },
+  { name: 'Yandex (souvent meilleur sur les PDF)', build: q => 'https://yandex.com/search/?text=' + encodeURIComponent(q) },
+  { name: 'DuckDuckGo', build: q => 'https://duckduckgo.com/?q=' + encodeURIComponent(q) }
+];
+
+// Moteurs spécialisés documents/dépôts institutionnels : déjà agrégés, pas de config nécessaire.
+const SPECIALIZED_ENGINES = [
+  { name: 'Scribd — le plus grand agrégateur multi-documents (100M+ : PDF, Word, PowerPoint...)', build: q => 'https://www.scribd.com/search?query=' + encodeURIComponent(q) },
+  { name: 'BASE — 300M+ documents de dépôts institutionnels (ONG, universités, gouvernements)', build: q => 'https://www.base-search.net/Search/Results?lookfor=' + encodeURIComponent(q) },
+  { name: 'CORE — agrégateur mondial de documents en accès libre', build: q => 'https://core.ac.uk/search?q=' + encodeURIComponent(q) },
+  { name: 'ReliefWeb — rapports humanitaires et ONG', build: q => 'https://reliefweb.int/updates?search=' + encodeURIComponent(q) },
+  { name: 'UN Digital Library — documents des agences ONU', build: q => 'https://digitallibrary.un.org/search?ln=en&p=' + encodeURIComponent(q) }
+];
+
+function buildFileClause(){
+  const chosenFormats = FORMATS.filter(f=>activeFormats.has(f.id));
+  return chosenFormats.map(f=>`filetype:${f.ext}`).join(' OR ');
+}
+
+document.getElementById('goBtn').onclick = ()=>{
+  const topic = document.getElementById('topic').value.trim();
+  const resultsEl = document.getElementById('results');
+  const enginesPanel = document.getElementById('enginesPanel');
+
+  if(!topic){
+    resultsEl.innerHTML = '<div class="empty">Entre un sujet pour lancer la recherche.</div>';
+    enginesPanel.style.display = 'none';
+    return;
+  }
+
+  const fileClause = buildFileClause();
+  const query = fileClause ? `"${topic}" ${fileClause}` : `"${topic}"`;
+
+  let html = `<div class="results-head"><h2>Recherche ouverte, tout le web</h2><span class="count">${WEB_ENGINES.length} moteurs</span></div>`;
+  html += `<div class="group"><div class="group-title">Aucune restriction de site — ça couvre ONG, gouvernements, universités, petits sites, tout ce que le moteur a indexé</div>`;
+  WEB_ENGINES.forEach(engine=>{
+    const url = engine.build(query);
+    html += `<a class="card" href="${url}" target="_blank" rel="noopener">
+      <div class="card-title">${engine.name}</div>
+      <div class="card-query">${query}</div>
+    </a>`;
+  });
+  html += `</div>`;
+
+  resultsEl.innerHTML = html;
+
+  // Specialized engines panel
+  const enginesEl = document.getElementById('engines');
+  let engHtml = '';
+  SPECIALIZED_ENGINES.forEach(engine=>{
+    const url = engine.build(topic);
+    engHtml += `<a class="card" href="${url}" target="_blank" rel="noopener">
+      <div class="card-title">${engine.name}</div>
+    </a>`;
+  });
+  enginesEl.innerHTML = engHtml;
+  enginesPanel.style.display = 'block';
+};
+
+document.getElementById('topic').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') document.getElementById('goBtn').click();
+});
+</script>
+
+</body>
+</html>
