@@ -1,0 +1,18 @@
+{
+  "name": "Chercheur de documents",
+  "short_name": "Chercheur",
+  "description": "Recherche de documents, articles et médias, sans restriction de site.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1c1c20",
+  "theme_color": "#1c1c20",
+  "icons": [
+    {
+      "src": "icône-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
