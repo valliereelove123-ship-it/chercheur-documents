@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: Ajouter la plateforme Android
-        run: npx cap add android
+        run: npx cap add  android
 
       - name: Générer les icônes (si @capacitor/assets présent)
         run: |
