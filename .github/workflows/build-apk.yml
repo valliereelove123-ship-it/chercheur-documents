@@ -23,7 +23,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Installer les  dépendances
+      - name: Installer les dépendances
         run: npm install
 
       - name: Ajouter la plateforme  Android
