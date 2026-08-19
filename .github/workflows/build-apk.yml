@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout du projet
+      - name: Checkout du  projet
         uses: actions/checkout@v4
 
       - name: Installer Node.js
