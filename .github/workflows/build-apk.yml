@@ -29,7 +29,7 @@ jobs:
       - name: Ajouter la plateforme Android
         run: npx cap add android
 
-      - name: Générer les  icônes (si @capacitor/assets présent)
+      - name: Générer les icônes (si @capacitor/assets présent)
         run: |
           npm install @capacitor/assets --no-save
           npx capacitor-assets generate --android || true
