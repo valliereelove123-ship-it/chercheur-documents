@@ -1,0 +1,17 @@
+{
+  "name": "eve",
+  "version": "1.0.0",
+  "description": "Eve — recherche, jeux et culture, app Android autonome",
+  "scripts": {
+    "sync": "npx cap sync android",
+    "open:android": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/browser": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
