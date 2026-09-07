@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Eve</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1c1c20">
+<link rel="apple-touch-icon" href="icône.png">
+<link rel="icon" href="icône.png">
+<script src="https://unpkg.com/@capacitor/browser@6/dist/plugin.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+:root{
+--ink:#eae7de;
+--paper:#1c1c20;
+--line:#34333a;
+--moss:#7fb3c9;
+--moss-deep:#578ba3;
+--clay:#a3c9a8;
+--amber:#d9a441;
+--muted:#8c887a;
+--card:rgba(35,34,39,.42);
+}
+html[data-theme="light"]{
+--ink:#221d14;
+--paper:#ffffff;
+--line:#e5e5e5;
+--moss:#d17b3d;
+--moss-deep:#a85f28;
+--clay:#3a6ea5;
+--amber:#b6842a;
+--muted:#7a7261;
+--card:rgba(247,247,245,.45);
+}
+*{box-sizing:border-box;}
+*{transition:background-color .2s, border-color .2s, color .2s;}
+html{height:100%;}
+body{
+margin:0;
+min-height:100%;
+background-color:var(--paper);
+background-image:
+linear-gradient(180deg, rgba(20,20,24,.15) 0%, rgba(20,20,24,.4) 100%),
+url('bg-dark.jpg');
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+background-repeat:no-repeat;
+color:var(--ink);
+font-family:'Inter',sans-serif;
+-webkit-font-smoothing:antialiased;
+padding-bottom:40px;
+}
+html[data-theme="light"] body{
+background-image:
+linear-gradient(180deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,.4) 100%),
+url('bg-light.jpg');
+}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px 60px;}
+/* ---------- Top identity bar ---------- */
+.topbar{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:18px 20px 14px;
+max-width:920px;
+margin:0 auto;
+position:sticky;
+top:0;
+z-index:60;
+background:color-mix(in srgb, var(--paper) 85%, transparent);
+backdrop-filter:blur(6px);
+-webkit-backdrop-filter:blur(6px);
+}
+.brand{
+display:flex;
+align-items:center;
+gap:9px;
+font-family:'IBM Plex Mono',monospace;
+font-size:12px;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--moss);
+}
+.brand svg{flex-shrink:0;}
+.theme-btn{
+width:38px;height:38px;
+border-radius:999px;
+border:1px solid var(--line);
+background:var(--card);
+color:var(--ink);
+font-size:15px;
+display:flex;align-items:center;justify-content:center;
+cursor:pointer;
+}
+/* ---------- Section headers ---------- */
+.view-head{padding:6px 0 26px;}
+.eyebrow{
+font-family:'IBM Plex Mono',monospace;
+font-size:11.5px;
+letter-spacing:.14em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:10px;
+}
+h1{
+font-family:'Fraunces',serif;
+font-weight:600;
+font-size:clamp(26px,6vw,38px);
+line-height:1.08;
+margin:0 0 10px;
+letter-spacing:-0.01em;
+}
+h1 em{
+font-style:italic;
+color:var(--moss);
+background-image: linear-gradient(currentColor, currentColor);
+background-size: 100% 2px;
+background-repeat: no-repeat;
+background-position: 0 96%;
+padding-bottom: 2px;
+}
+.sub{color:var(--muted);font-size:14.5px;line-height:1.55;max-width:60ch;}
+.panel{
+background:var(--card);
+backdrop-filter:blur(4px);
+-webkit-backdrop-filter:blur(4px);
+border:1px solid var(--line);
+border-radius:3px;
+padding:24px;
+margin-bottom:22px;
+}
+label{
+display:block;
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:8px;
+}
+input[type=text]{
+width:100%;
+padding:14px 16px;
+font-size:17px;
+font-family:'Fraunces',serif;
+border:1px solid var(--line);
+border-radius:2px;
+background:var(--paper);
+color:var(--ink);
+}
+input[type=text]:focus{outline:2px solid var(--moss);outline-offset:1px;}
+.row{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;}
+.col{flex:1;min-width:220px;}
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{
+font-family:'IBM Plex Mono',monospace;
+font-size:12.5px;
+padding:8px 13px;
+border:1px solid var(--line);
+border-radius:999px;
+cursor:pointer;
+background:var(--paper);
+color:var(--ink);
+user-select:none;
+}
+.chip.active{background:var(--moss);border-color:var(--moss);color:#14141a;}
+.go{
+margin-top:22px;
+width:100%;
+padding:16px;
+background:var(--moss);
+color:#14141a;
+border:none;
+border-radius:2px;
+font-family:'IBM Plex Mono',monospace;
+font-size:13px;
+letter-spacing:.08em;
+text-transform:uppercase;
+font-weight:600;
+cursor:pointer;
+}
+.go:hover{background:var(--clay);}
+.results{margin-top:30px;}
+.results-head{
+display:flex;justify-content:space-between;align-items:baseline;
+border-bottom:1px solid var(--line);
+padding-bottom:10px;margin-bottom:18px;
+}
+.results-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:0;}
+.category-block{margin-bottom:28px;}
+.category-head{
+display:flex;align-items:center;justify-content:space-between;gap:12px;
+cursor:pointer;background:none;border:none;width:100%;padding:0;text-align:left;color:var(--ink);
+}
+.category-title{font-family:'Fraunces',serif;font-weight:600;font-size:16.5px;margin-bottom:4px;}
+.category-chevron{font-size:13px;color:var(--muted);transition:transform .18s;flex-shrink:0;margin-top:-4px;}
+.category-block.collapsed .category-chevron{transform:rotate(-90deg);}
+.category-block.collapsed .category-note,
+.category-block.collapsed .category-cards{display:none;}
+.category-note{font-size:12.5px;color:var(--muted);margin-bottom:14px;}
+.history-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.history-row:empty{margin-top:0;}
+.history-chip{
+font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+background:none;border:1px solid var(--line);border-radius:999px;padding:5px 11px;cursor:pointer;
+}
+.history-chip:hover{color:var(--moss);border-color:var(--moss);}
+.save-btn{
+display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;
+text-transform:uppercase;padding:7px 14px;border:1px solid var(--moss);border-radius:999px;
+color:var(--moss);background:transparent;cursor:pointer;margin-bottom:20px;
+}
+.save-btn:hover{background:var(--moss);color:var(--paper);}
+.card{
+display:block;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);
+border-radius:2px;padding:16px 18px;margin-bottom:10px;text-decoration:none;color:var(--ink);
+backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+.card:hover{transform:translateX(2px);}
+.card-title{font-size:14px;font-weight:600;}
+.card-wrap{display:flex;flex-direction:column;}
+.saved-item{
+display:flex;justify-content:space-between;align-items:center;padding:12px 14px;
+border:1px solid var(--line);border-radius:2px;margin-bottom:8px;background:var(--paper);
+}
+.saved-item-topic{font-family:'Fraunces',serif;font-size:15px;}
+.saved-item-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;}
+.saved-item-actions{display:flex;gap:8px;flex-shrink:0;}
+.saved-item-actions button{
+font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 10px;border-radius:2px;
+border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;
+}
+.saved-item-actions button.run{border-color:var(--moss);color:var(--moss);}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
+footer{
+margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+font-size:12px;color:var(--muted);line-height:1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<div class="brand">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+<line x1="15.3" y1="15.3" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+Eve
+</div>
+<button class="theme-btn" id="themeToggle" aria-label="Changer de thème">🌙</button>
+</div>
+
+<div class="wrap">
+
+<section id="view-recherche">
+<div class="view-head">
+<div class="eyebrow">Recherche documentaire</div>
+<h1>Trouve des documents, <em>partout où ils vivent.</em></h1>
+<p class="sub">Entre un sujet, choisis tes formats. L'outil ouvre des recherches ciblées sur les moteurs qui indexent déjà des millions de documents institutionnels.</p>
+</div>
+
+<div class="panel" id="topPanel">
+<label for="topic">Sujet de recherche</label>
+<input type="text" id="topic" list="courseSuggestions" placeholder="ex : sécurité alimentaire Haïti, dette publique, migration régionale...">
+<datalist id="courseSuggestions">
+<option value="sémiotique de l'image">
+<option value="signe linguistique Saussure">
+<option value="iconicité Peirce">
+<option value="sémiologie de la communication Klinkenberg">
+<option value="connotation et dénotation">
+<option value="méthodologie de la recherche qualitative">
+<option value="échantillonnage en méthodologie">
+<option value="revue de littérature méthodologie">
+<option value="méthodes mixtes de recherche">
+<option value="éthique journalistique">
+<option value="désinformation et fact-checking">
+<option value="journalisme d'investigation">
+<option value="liberté de la presse Haïti">
+<option value="anthropologie culturelle">
+<option value="méthode ethnographique">
+<option value="anthropologie de la parenté">
+<option value="rites de passage anthropologie">
+</datalist>
+<div class="history-row" id="historyRow"></div>
+<div class="row">
+<div class="col">
+<label>Formats</label>
+<div class="chip-group" id="formats"></div>
+</div>
+</div>
+<button class="go" id="goBtn">Chercher partout</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<div class="panel" id="savedPanel" style="display:none;">
+<label>Mes recherches sauvegardées</label>
+<div id="savedList"></div>
+</div>
+
+<footer>
+Chaque carte ouvre une recherche filtrée sur le site d'origine — les documents restent hébergés là où ils vivent (légaux, publics), rien n'est copié ici.
+</footer>
+</section>
+
+</div>
+
+<script>
+/* =========================================================
+THÈME
+========================================================= */
+const themeToggle = document.getElementById('themeToggle');
+const htmlEl = document.documentElement;
+function applyTheme(theme){
+htmlEl.setAttribute('data-theme', theme);
+themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+try { localStorage.setItem('theme', theme); } catch(e) {}
+}
+let savedTheme = 'dark';
+try { savedTheme = localStorage.getItem('theme') || 'dark'; } catch(e) {}
+applyTheme(savedTheme);
+themeToggle.onclick = ()=>{
+const current = htmlEl.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+applyTheme(current === 'light' ? 'dark' : 'light');
+};
+
+/* =========================================================
+RECHERCHE — moteurs, formats, historique, sauvegardes
+========================================================= */
+const FORMATS = [
+{ id:'pdf', label:'PDF', ext:'pdf' },
+{ id:'docx', label:'Word', ext:'docx' },
+{ id:'pptx', label:'PowerPoint', ext:'pptx' },
+{ id:'xlsx', label:'Excel', ext:'xlsx' }
+];
+let activeFormats = new Set();
+function renderChips(){
+const formatEl = document.getElementById('formats');
+formatEl.innerHTML = '';
+FORMATS.forEach(f=>{
+const c = document.createElement('div');
+c.className = 'chip' + (activeFormats.has(f.id) ? ' active' : '');
+c.textContent = f.label;
+c.onclick = ()=>{
+activeFormats.has(f.id) ? activeFormats.delete(f.id) : activeFormats.add(f.id);
+renderChips();
+};
+formatEl.appendChild(c);
+});
+}
+renderChips();
+
+const CATEGORIES = [
+{
+title: 'Plateformes de documents',
+note: 'Fichiers hébergés et téléchargeables — PDF, présentations, rapports numérisés.',
+useFileClause: false,
+engines: [
+{ name: 'Scribd — le plus grand agrégateur multi-documents (100M+)', color: '#1E7B5F', build: q => 'https://www.scribd.com/search?query=' + encodeURIComponent(q) },
+{ name: 'SlideShare — présentations et documents partagés', color: '#0E76A8', build: q => 'https://www.slideshare.net/search/slideshow?q=' + encodeURIComponent(q) }
+]
+},
+{
+title: 'Plateformes d\'articles académiques',
+note: 'Moteurs spécialisés dans les articles, publications et papiers de recherche.',
+useFileClause: false,
+engines: [
+{ name: 'Google Scholar — articles et publications académiques', color: '#4285F4', build: q => 'https://scholar.google.com/scholar?q=' + encodeURIComponent(q) },
+{ name: 'Semantic Scholar — concurrent direct de Google Scholar, interface plus claire', color: '#1857B6', build: q => 'https://www.semanticscholar.org/search?q=' + encodeURIComponent(q) + '&sort=relevance' }
+]
+},
+{
+title: 'Actualités',
+note: 'Pour situer un sujet dans son contexte récent.',
+useFileClause: false,
+engines: [
+{ name: 'Google News', color: '#4285F4', build: q => 'https://news.google.com/search?q=' + encodeURIComponent(q) }
+]
+},
+{
+title: 'Images',
+note: 'Photos libres de droits, utilisables sans risque.',
+useFileClause: false,
+engines: [
+{ name: 'Unsplash', color: '#111111', build: q => 'https://unsplash.com/s/photos/' + encodeURIComponent(q) }
+]
+},
+{
+title: 'Moteurs généraux',
+note: 'Aucune restriction de site — couvre ONG, gouvernements, universités, petits sites, tout ce que le moteur a indexé.',
+useFileClause: true,
+engines: [
+{ name: 'Google', color: '#4285F4', build: q => 'https://www.google.com/search?q=' + encodeURIComponent(q) },
+{ name: 'Yandex (souvent meilleur sur les PDF)', color: '#D17B3D', build: q => 'https://yandex.com/search/?text=' + encodeURIComponent(q) }
+]
+}
+];
+
+function buildFileClause(){
+const chosenFormats = FORMATS.filter(f=>activeFormats.has(f.id));
+return chosenFormats.map(f=>`filetype:${f.ext}`).join(' OR ');
+}
+
+document.getElementById('goBtn').onclick = ()=>{
+const topic = document.getElementById('topic').value.trim();
+const resultsEl = document.getElementById('results');
+if(!topic){
+resultsEl.innerHTML = '<div class="empty">Entre un sujet pour lancer la recherche.</div>';
+return;
+}
+const fileClause = buildFileClause();
+const fileQuery = fileClause ? `"${topic}" ${fileClause}` : `"${topic}"`;
+
+let html = `<div class="results-head"><h2>Résultats</h2></div>`;
+html += `<button class="save-btn" id="saveBtn">💾 Sauvegarder cette recherche</button>`;
+
+CATEGORIES.forEach((category, i)=>{
+const query = category.useFileClause ? fileQuery : `"${topic}"`;
+html += `<div class="category-block collapsed" data-cat="${i}">`;
+html += `<button type="button" class="category-head">
+<div class="category-title">${category.title}</div>
+<span class="category-chevron">▾</span>
+</button>`;
+html += `<div class="category-note">${category.note}</div>`;
+html += `<div class="category-cards">`;
+category.engines.forEach(engine=>{
+const url = engine.build(query);
+html += `<div class="card-wrap">
+<a class="card" href="${url}" target="_blank" rel="noopener" style="border-left-color:${engine.color}">
+<div class="card-title" style="color:${engine.color}">${engine.name}</div>
+</a>
+</div>`;
+});
+html += `</div></div>`;
+});
+
+resultsEl.innerHTML = html;
+addToHistory(topic);
+
+resultsEl.querySelectorAll('.category-head').forEach(btn=>{
+btn.onclick = ()=> btn.closest('.category-block').classList.toggle('collapsed');
+});
+
+document.getElementById('saveBtn').onclick = ()=>{
+saveSearch(topic, [...activeFormats]);
+document.getElementById('saveBtn').textContent = '✓ Sauvegardé';
+setTimeout(()=>{ document.getElementById('saveBtn').textContent = '💾 Sauvegarder cette recherche'; }, 1500);
+};
+};
+
+function getHistory(){ try { return JSON.parse(localStorage.getItem('searchHistory') || '[]'); } catch(e){ return []; } }
+function addToHistory(topic){
+let list = getHistory().filter(t => t.toLowerCase() !== topic.toLowerCase());
+list.unshift(topic);
+list = list.slice(0, 10);
+try { localStorage.setItem('searchHistory', JSON.stringify(list)); } catch(e){}
+renderHistory();
+}
+function renderHistory(){
+const row = document.getElementById('historyRow');
+const list = getHistory();
+row.innerHTML = list.map(t => `<button type="button" class="history-chip" data-topic="${t.replace(/"/g,'&quot;')}">${t}</button>`).join('');
+row.querySelectorAll('.history-chip').forEach(chip=>{
+chip.onclick = ()=>{
+document.getElementById('topic').value = chip.dataset.topic;
+document.getElementById('goBtn').click();
+};
+});
+}
+renderHistory();
+
+document.getElementById('topic').addEventListener('keydown', (e)=>{
+if(e.key === 'Enter'){
+e.preventDefault();
+document.getElementById('topic').blur();
+document.getElementById('goBtn').click();
+}
+});
+
+function getSavedSearches(){ try { return JSON.parse(localStorage.getItem('savedSearches') || '[]'); } catch(e){ return []; } }
+function setSavedSearches(list){ try { localStorage.setItem('savedSearches', JSON.stringify(list)); } catch(e){} }
+function saveSearch(topic, formats){
+const list = getSavedSearches();
+if(!list.some(s=>s.topic === topic && s.formats.join(',') === formats.join(','))){
+list.unshift({ topic, formats, ts: Date.now() });
+setSavedSearches(list.slice(0, 20));
+}
+renderSaved();
+}
+function deleteSaved(index){ const list = getSavedSearches(); list.splice(index, 1); setSavedSearches(list); renderSaved(); }
+function runSaved(index){
+const list = getSavedSearches();
+const item = list[index];
+document.getElementById('topic').value = item.topic;
+activeFormats = new Set(item.formats.length ? item.formats : ['pdf']);
+renderChips();
+document.getElementById('goBtn').click();
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function renderSaved(){
+const list = getSavedSearches();
+const panel = document.getElementById('savedPanel');
+const listEl = document.getElementById('savedList');
+if(list.length === 0){ panel.style.display = 'none'; return; }
+panel.style.display = 'block';
+listEl.innerHTML = list.map((item, i)=>{
+const date = new Date(item.ts).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+const formatsLabel = item.formats.join(', ').toUpperCase();
+return `<div class="saved-item">
+<div>
+<div class="saved-item-topic">${item.topic}</div>
+<div class="saved-item-meta">${formatsLabel || 'Tous formats'} — ${date}</div>
+</div>
+<div class="saved-item-actions">
+<button class="run" onclick="runSaved(${i})">Relancer</button>
+<button onclick="deleteSaved(${i})">✕</button>
+</div>
+</div>`;
+}).join('');
+}
+renderSaved();
+
+/* =========================================================
+OUVERTURE DES LIENS SANS QUITTER L'APP
+Intercepte les clics sur les cartes de résultats et les ouvre
+dans le navigateur intégré (Capacitor Browser) au lieu du
+navigateur externe du téléphone.
+========================================================= */
+document.addEventListener('click', function(e){
+const link = e.target.closest('a.card');
+if(!link) return;
+const url = link.getAttribute('href');
+if(!url) return;
+const CapBrowser = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser;
+if(CapBrowser){
+e.preventDefault();
+CapBrowser.open({ url });
+}
+});
+</script>
+</body>
+</html>
